@@ -1,0 +1,50 @@
+{% assign my_developer_name = "Abdullah AI" %}
+<h2>Created by: {{ my_developer_name }}</h2>
+
+<div style="padding: 50px; backgroud: #f4f4f4 text-align:center"> 
+
+<h1>Hello world!!!</h1>
+<p>Aj ka din: {{"now"| date:" %Y-%m-%d"  }}</p>
+</div>
+<div style="margin-top: 20px; font-size: 18px;">
+   <p>Original Text: {{ "abdullah react developer" }}</p>
+   <p>Uppercase Text: {{ "abdullah react developer" | upcase }}</p>
+   <p>Fake Price Formatting: {{ 1999 | money }}</p>
+</div>
+
+{% assign developer_experience = 3 %}
+
+<div style="padding: 20px; border: 2px solid #333; margin-top: 20px;">
+  {% if developer_experience > 5 %}
+    <p style="color: green; font-weight: bold;">Status: Senior Shopify React Developer</p>
+  {% elsif developer_experience >= 2 %}
+    <p style="color: orange; font-weight: bold;">Status: Mid-Level Developer (Ready for Shopify Jobs!)</p>
+  {% else %}
+    <p style="color: red;">Status: Junior Intern</p>
+  {% endif %}
+</div>
+<div style="margin-top: 30px;">
+  <h3>Hamare Store ki Collections Lists:</h3>
+  <ul>
+    {% for single_collection in collections %}
+      <li style="margin-bottom: 10px;">
+        <span>(Item Number: {{ forloop.index }})</span>
+        <strong>Naam:</strong> {{ single_collection.title }} | 
+        <strong>Total Products:</strong> {{ single_collection.all_products_count }}
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+
+
+{% schema %}
+{
+  "name": "Hello World",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Hello World"
+    }
+  ]
+}
+{% endschema %}

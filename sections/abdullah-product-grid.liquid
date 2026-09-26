@@ -1,0 +1,69 @@
+<div style="padding: 40px; max-width: 1200px; margin: 0 auto; font-family: sans-serif;">
+  <h2 style="text-align: center; margin-bottom: 30px; color: #222;">🔥 Abdullah's Top Picks (Day 5 Milestone)</h2>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+    {% comment %} Hum pure store ki collections me se pehli collection ke products par loop chala rahe hain {% endcomment %}
+    {% for product in collections.all.products limit: 4 %}
+      
+      <div style="border: 1px solid #e1e1e1; padding: 15px; border-radius: 8px; text-align: center; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between;">
+        
+        <!-- Product Image -->
+        <div style="margin-bottom: 15px; height: 200px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+          {% if product.featured_image %}
+            <img src="{{ product.featured_image | image_url: width: 300 }}" 
+                 alt="{{ product.title | escape }}" 
+                 width="300" 
+                 height="{{ 300 | divided_by: product.featured_image.aspect_ratio | round }}"
+                 style="max-width: 100%; max-height: 100%; object-fit: contain;">
+          {% else %}
+            {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          {% endif %}
+        </div>
+
+        <!-- Product Details -->
+        <div>
+          <h3 style="font-size: 16px; margin: 10px 0; color: #333;">{{ product.title }}</h3>
+          
+          <div style="margin-bottom: 15px;">
+            <!-- Discounted/Current Price -->
+            <span style="font-weight: bold; color: #e44d26; font-size: 18px;">{{ product.price | money }}</span>
+            
+            <!-- Compare At Price (Strikethrough) -->
+            {% if product.compare_at_price > product.price %}
+              <span style="text-decoration: line-through; color: #888; margin-left: 10px; font-size: 14px;">
+                {{ product.compare_at_price | money }}
+              </span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Availability Button -->
+        <div>
+          {% if product.available %}
+            <a href="{{ product.url }}" style="display: block; background: #008060; color: #fff; text-decoration: none; padding: 10px; border-radius: 4px; font-weight: bold; font-size: 14px; transition: background 0.2s;">
+              View Details
+            </a>
+          {% else %}
+            <button disabled style="width: 100%; background: #ccc; color: #666; border: none; padding: 10px; border-radius: 4px; font-weight: bold; font-size: 14px; cursor: not-allowed;">
+              Sold Out
+            </button>
+          {% endif %}
+        </div>
+
+      </div>
+
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Test day 5",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Test day 5"
+    }
+  ]
+}
+{% endschema %}

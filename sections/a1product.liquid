@@ -1,0 +1,48 @@
+{% assign singleProduct = collections['automated-collection'].products[0] %}
+
+<div class="product-card" style="padding:20px; border: 1px solid #ddd; border-radius: 8px; max-width: 300px;">
+  <h2>Product card Practice</h2>
+  
+  {% if singleProduct %}
+    <div style="padding-top:20px;">
+      <!-- Product Image (FIXED: Missing quote added and variable fixed) -->
+<img  
+  src="{{ singleProduct.featured_image | image_url: width: 500 }}"   
+  width="500"
+  height="{{ 500 | divided_by: singleProduct.featured_image.aspect_ratio | round }}" 
+  alt="{{ singleProduct.title | escape }}" 
+  style="width:100%; height:auto; border-radius:4px;"
+>
+     
+      <!-- Product Title -->
+      <h3 style="margin: 10px 0 5px 0;">{{ singleProduct.title | upcase | escape }}</h3>
+      
+      <!-- Product Vendor -->
+      {% if singleProduct.vendor  %}
+  <h3 style="margin: 10px 0 5px 0;">{{singleProduct.vendor }}</h3>
+  {%else%}
+            <h3 style="margin: 10px 0 5px 0;">Brand Not Available</h3>
+
+        {% endif %}
+    
+      <!-- Product Price -->
+      <p style="color: #222; font-weight: bold;">{{ singleProduct.price | money }}</p>
+    </div>
+  {% else %}
+    <p>Koi product nahi mila ya collection khali hai.</p>
+  {% endif %}
+</div>
+
+
+
+{% schema %}
+{
+  "name": "product",
+  "settings": [],
+  "presets": [
+    {
+      "name": "product"
+    }
+  ]
+}
+{% endschema %}
