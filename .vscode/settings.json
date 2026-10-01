@@ -1,0 +1,97 @@
+{
+  "emmet.triggerExpansionOnTab": true,
+  "emmet.showExpandedAbbreviation": "always",
+  "emmet.includeLanguages": {
+    "html.liquid": "html",
+    "liquid": "html"
+  },
+  "files.associations": {
+    "*.liquid": "html"
+  },
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": [
+          "punctuation.definition.tag.begin.liquid",
+          "punctuation.definition.tag.end.liquid"
+        ],
+        "settings": {
+          "foreground": "#808080"
+        }
+      },
+      {
+        "scope": [
+          "entity.name.tag.liquid",
+          "entity.name.tag.render.liquid",
+          "entity.name.tag.style.liquid",
+          "entity.name.tag.schema.liquid"
+        ],
+        "settings": {
+          "foreground": "#569CD6"
+        }
+      },
+      {
+        "scope": [
+          "keyword.control.case.liquid",
+          "keyword.control.conditional.liquid",
+          "keyword.control.for.liquid",
+          "keyword.control.liquid",
+          "keyword.control.liquid.liquid",
+          "keyword.control.loop.liquid",
+          "keyword.control.other.liquid",
+          "keyword.control.paginate.liquid",
+          "keyword.control.tablerow.liquid",
+          "keyword.operator.expression.liquid"
+        ],
+        "settings": {
+          "foreground": "#C586C0"
+        }
+      },
+      {
+        "scope": [
+          "string.quoted.double.liquid",
+          "string.quoted.single.liquid"
+        ],
+        "settings": {
+          "foreground": "#CE9178"
+        }
+      },
+      {
+        "scope": [
+          "variable.language.liquid",
+          "variable.other.liquid",
+          "variable.other.member.liquid",
+          "variable.parameter.liquid"
+        ],
+        "settings": {
+          "foreground": "#9CDCFE"
+        }
+      },
+      {
+        "scope": "support.function.liquid",
+        "settings": {
+          "foreground": "#DCDCAA"
+        }
+      },
+      {
+        "scope": [
+          "constant.language.liquid",
+          "constant.numeric.liquid"
+        ],
+        "settings": {
+          "foreground": "#B5CEA8"
+        }
+      },
+      {
+        "scope": [
+          "comment.block.liquid",
+          "comment.block.documentation.liquid",
+          "comment.line.number-sign.liquid"
+        ],
+        "settings": {
+          "foreground": "#6A9955"
+        }
+      }
+    ]
+  }
+}

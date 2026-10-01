@@ -1,0 +1,26 @@
+/* 1. Mobile view k liye default size logic */
+/* Hum ne 'img' tag lagaya aur placeholder 'svg' ko bhi sath shamil kar diya */
+.feature-icon-wrapper img.feature-card-icon,
+.feature-icon-wrapper svg.placeholder-svg {
+    width: var(--mobile-icon-size, 40px) !important;
+    height: auto !important;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Specific logic placeholder svg ki lambayi k liye */
+.feature-icon-wrapper svg.placeholder-svg {
+    height: var(--mobile-icon-size, 40px) !important;
+}
+
+/* 2. Desktop View (Bari Screen) par size change hoga */
+@media screen and (min-width: 768px) {
+    .feature-icon-wrapper img.feature-card-icon,
+    .feature-icon-wrapper svg.placeholder-svg {
+        width: var(--desktop-icon-size, 50px) !important;
+    }
+    
+    .feature-icon-wrapper svg.placeholder-svg {
+        height: var(--desktop-icon-size, 50px) !important;
+    }
+}

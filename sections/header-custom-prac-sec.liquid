@@ -1,0 +1,140 @@
+{{ 'header-custom-prac-sec.css' | asset_url | stylesheet_tag }}
+
+<div
+  class="header-banner-background"
+  style="
+    --desktop-height: {{ section.settings.desktop_height }}px;
+    --mobile-height: {{ section.settings.mobile_height }}px;
+  "
+>
+  <div
+    class="header-content"
+    style="
+      text-align:{{section.settings.text_alignment}};
+      align-items: {% if section.settings.text_alignment == 'center' %}center{% elsif section.settings.text_alignment == 'right' %}flex-end{% else %}flex-start{% endif %};
+    "
+  >
+    <h1>{{ section.settings.heading }}</h1>
+    <h3>{{ section.settings.sub_heading }}</h3>
+    <button class="button-hero">
+      {% if section.settings.hero_button_link != blank %}
+        <a class="link-style" href="{{ section.settings.hero_button_link }}" target="_blank">
+          {{ section.settings.button_text }}
+        </a>
+      {% else %}
+        See Products
+      {% endif %}
+    </button>
+  </div>
+
+  <div class="image-container">
+    {% if section.settings.image != blank %}
+      <img
+        class="header-image"
+        src="{{ section.settings.image | image_url: width: 400 }}"
+        alt="{{ section.settings.image.alt | escape }}"
+        width="400"
+        height="{{ 400 | divided_by: section.settings.image.aspect_ratio | round }}"
+      >
+    {% else %}
+      <img
+        class="header-image"
+        src="{{ 'bannerImage.jpg' | asset_url }}"
+        alt="Default Hero Product Image"
+        height="400"
+        width="400"
+      >
+    {% endif %}
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Header-Banner-custom",
+  "presets": [
+    {
+      "name": "Header-Banner-custom",
+      "settings": {
+        "heading": "Welcome to Our Store! (Default)",
+        "sub_heading": "Add your amazing promotional sub-heading description text here by default.",
+        "button_text": "See Products",
+        "text_alignment": "left",
+        "desktop_height": 450,
+        "mobile_height": 350
+      }
+    }
+  ],
+  "settings": [
+    {
+      "id": "heading",
+      "type": "text",
+      "label": "Heading Banner",
+      "info": "Set Heading Text"
+    },
+    {
+      "id": "sub_heading",
+      "type": "textarea",
+      "label": "Sub Heading Description",
+      "info": "Set Heading description"
+    },
+    {
+      "id": "image",
+      "type": "image_picker",
+      "label": "Set Banner Image",
+      "info": "Set Image"
+    },
+    {
+      "id": "button_text",
+      "type": "text",
+      "label": "Heading Button Text",
+      "info": "Set Heading Text"
+    },
+    {
+      "type": "url",
+      "id": "hero_button_link",
+      "label": "Hero Button Link",
+      "info": "Set the URL for the hero button"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Set Container Content alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Align Left"
+        },
+        {
+          "value": "center",
+          "label": "Align Center"
+        },
+        {
+          "value": "right",
+          "label": "Align right"
+        }
+      ],
+      "default": "left",
+      "info": "Choose the horizontal alignment for your text content."
+    },
+    {
+      "type": "range",
+      "id": "desktop_height",
+      "min": 300,
+      "max": 800,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop Height",
+      "default": 450
+    },
+    {
+      "type": "range",
+      "id": "mobile_height",
+      "min": 250,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "label": "Mobile Height",
+      "default": 350
+    }
+  ]
+}
+{% endschema %}
