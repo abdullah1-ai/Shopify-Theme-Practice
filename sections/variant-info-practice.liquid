@@ -1,1 +1,79 @@
-e
+<div
+  class="variant-practice-wrapper"
+  style="padding: 20px; border: 2px dashed #008060; border-radius: 8px; margin: 20px 0; background: #fff; font-family: sans-serif;"
+>
+  {% assign current_variant = product.selected_or_first_available_variant %}
+
+  <h3 style="margin-top: 0; color: #008060;">🔬 Abdullah's Variant Investigator</h3>
+
+  <div class="variant-details-grid" style="display: flex; flex-direction: column; gap: 10px;">
+    <p><strong>Current Variant Title:</strong> {{ current_variant.title }}</p>
+    <p><strong>Variant ID:</strong> {{ current_variant.id }}</p>
+    <p><strong>Price:</strong> {{ current_variant.price | money }}</p>
+
+    {% if current_variant.compare_at_price > current_variant.price %}
+      <p>
+        <strong>Old Price (Compare-at):</strong>
+        <span style="text-decoration: line-through; color: #888;">{{ current_variant.compare_at_price | money }}</span>
+      </p>
+    {% endif %}
+
+    <p>
+      <strong>Availability:</strong>
+      {% if current_variant.available %}
+        <span style="color: green; font-weight: bold;">In Stock</span>
+      {% else %}
+        <span style="color: red; font-weight: bold;">Sold Out</span>
+      {% endif %}
+    </p>
+  </div>
+  <div class="product">
+    <h2 class="">Selected Product</h2>
+    <p class="">{{ section.settings.dynamic_Product.title | default: 'No product Selected' }}</p>
+    <p>{{ section.settings.dynamic_Product.price | money | default: 'No price Available' }}</p>
+    <p>
+      <strong>Availability:</strong>
+      {% if section.settings.dynamic_Product.available %}
+        <span style="color: green; font-weight: bold;">In Stock</span>
+      {% else %}
+        <span style="color: red; font-weight: bold;">Sold Out</span>
+      {% endif %}
+    </p>
+  </div>
+  {% if product.metafields.custom.material != blank %}
+    <p><strong>Material:</strong> {{ product.metafields.custom.material }}</p>
+  {% endif %}
+  {% if product.metafields.custom.warranty != blank %}
+    <p><strong>Warranty:</strong> {{ product.metafields.custom.warranty }}</p>
+  {% endif %}
+  {% if product.metafields.custom.care_instructions != blank %}
+    <p><strong>Care Instructions:</strong> {{ product.metafields.custom.care_instructions }}</p>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "variant-info-practice",
+  "settings": [
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Section Heading",
+      "default": "Product Technical Details",
+      "info": "Section Heading Change",
+      "placeholder": "Enter Section Heading Here"
+    },
+    {
+      "type": "product",
+      "id": "dynamic_Product",
+      "label": "Select Product",
+      "info": "Select Product to Display"
+    }
+  ],
+  "presets": [
+    {
+      "name": "variant-info-practice"
+    }
+  ]
+}
+{% endschema %}
