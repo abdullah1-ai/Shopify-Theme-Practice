@@ -1,0 +1,66 @@
+<div class="custom-product">
+  <div class="img-wrapper">
+    {% if product.featured_image != blank %}
+      <!-- 1. Primary Image (Featured Image) -->
+      <img
+        src="{{ product.featured_image | image_url: width: 400, height: 500, crop: 'center' }}"
+        srcset="
+          {{ product.featured_image | image_url: width: 200, height: 250, crop: 'center' }} 200w,
+          {{ product.featured_image | image_url: width: 400, height: 500, crop: 'center' }} 400w,
+          {{ product.featured_image | image_url: width: 600, height: 750, crop: 'center' }} 600w
+        "
+        sizes="(max-width: 480px) 200px, 400px"
+        alt="{{ product.featured_image.alt | default: product.title | escape }}"
+        loading="lazy"
+        width="400"
+        height="500"
+        class="primary-img"
+      >
+
+      <!-- 2. Secondary Image (Hover Image) -->
+      {% if product.images.size > 1 %}
+        <img
+          src="{{ product.images[1] | image_url: width: 400, height: 500, crop: 'center' }}"
+          srcset="
+            {{ product.images[1] | image_url: width: 200, height: 250, crop: 'center' }} 200w,
+            {{ product.images[1] | image_url: width: 400, height: 500, crop: 'center' }} 400w,
+            {{ product.images[1] | image_url: width: 600, height: 750, crop: 'center' }} 600w
+          "
+          sizes="(max-width: 480px) 200px, 400px"
+          alt="{{ product.images[1].alt | default: product.title | escape }}"
+          loading="lazy"
+          width="400"
+          height="500"
+          class="secondary-img"
+        >
+      {% endif %}
+
+    {% else %}
+      {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+    {% endif %}
+  </div>
+  <div class="img-button-wrapper">
+    <button
+      class="quick-view-btn"
+      type="button"
+      data-handle="{{ product.handle }}"
+      data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+    >
+      Quick View
+    </button>
+    <button class="add-to-cart-btn" type="button" data-variant-id="{{ product.variants.first.id }}">
+      + Add to Cart
+    </button>
+  </div>
+  <div class="product-info">
+    <p class="product-vendor">{{ product.vendor | escape }}</p>
+    <p class="product-title">{{ product.title | escape }}</p>
+    <p class="product-reviews">
+      {% for i in (1..5) %}
+        {% render 'review-star' %}
+      {% endfor %}
+      <span>No Reviews</span>
+    </p>
+    <p class="product-price">{% render 'price', product: product %}</p>
+  </div>
+</div>

@@ -1,0 +1,822 @@
+<style>
+  /* BASE */
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    background-color: #fcd34d;
+    font-size: 1.6rem;
+    color: #000000;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-bottom: 1rem;
+  }
+
+  /* BASE */
+
+  .button {
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    text-transform: uppercase;
+    max-width: 250px;
+  }
+
+  .button--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .text--highlight {
+    color: red;
+  }
+
+  .text--strike {
+    text-decoration: line-through;
+  }
+
+  .text--subdued {
+    opacity: 0.5;
+  }
+
+  /* PRODUCT */
+
+  .product {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+
+    .product-image {
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+
+    .product-info__price-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .product-content {
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    .product-content__variants {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .product-form__option {
+      border: none;
+    }
+
+    .product-form__option legend {
+      margin-bottom: 0.5rem;
+    }
+
+    .product-form__option-value label {
+      padding: 1rem;
+      border: 1px solid #000000;
+      border-radius: 4px;
+      cursor: pointer;
+      display: block;
+    }
+
+    .product-form__option-values--color label {
+      border: none;
+    }
+
+    .product-form__option-value input:checked + label {
+      border: 1px solid #000000;
+      background-color: #000000;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .product-form__option-value input {
+      display: none;
+    }
+
+    .product-form__option-value--unavailable label {
+      opacity: 0.2;
+    }
+
+    .product-form__option-values {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .product-form__option-values--color label {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+    }
+
+    .product-form__option-values--color input:checked + label {
+      box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+    }
+  }
+</style>
+
+<section class="cart-api-practice">
+  <div class="page-width">
+    <h2>Cart API Practice</h2>
+
+    {% comment %}
+      {% for option in product.options_with_values %}
+        {% if option.name == 'Color' or option.name == 'color' %}
+          {% for value in option.values %}
+            {%- comment -%}Har radio button ke liye unique ID banayein{%- endcomment -%}
+            {% assign input_id = 'color-' | append: forloop.index %}
+
+            <div class="color-option-wrapper">
+              <input
+                type="radio"
+                name="properties[Color]"
+                id="{{ input_id }}"
+                value="{{ value | escape }}"
+                {% if option.selected_value == value %}
+                  checked
+                {% endif %}
+              >
+              <!-- Label ko input ki ID ke sath jor diya -->
+              <label for="{{ input_id }}">{{ value }}</label>
+            </div>
+          {% endfor %}
+
+        {% else %}
+
+        {% endif %}
+      {% endfor %}
+
+      {% for variant in product.variants %}
+        {% comment %} Har variant ke liye unique ID banayein (e.g. variant-12345678) {% endcomment %}
+        {% assign variant_input_id = 'variant-' | append: variant.id %}
+
+        <div class="variant-option-wrapper">
+          <input
+            type="radio"
+            name="id"
+            id="{{ variant_input_id }}"
+            value="{{ variant.id }}"
+            {% unless variant.available %}
+              disabled
+            {% endunless %}
+            {% if variant.id == product.selected_or_first_available_variant.id %}
+              checked
+            {% endif %}
+          >
+          {% comment %} Label ko unique ID ke sath link kar diya {% endcomment %}
+          <label for="{{ variant_input_id }}">
+            {{ variant.title }} - {{ variant.price | money }}
+            {% unless variant.available %} (Out of Stock){% endunless %}
+          </label>
+        </div>
+      {% endfor %}
+    {% endcomment %}
+    <h3>{{ product.title }}</h3>
+    <form id="form-add-to-cart" action="{{ routes.cart_add_url }}" method="post">
+      <cart-variant-options section-id="{{ section.id }}">
+        <div class="inner-section-to-change">
+          {% assign variant_id = product.selected_or_first_available_variant.id %}
+          {% assign featured_img = product.selected_or_first_available_variant.featured_image
+            | default: product.featured_image
+          %}
+
+          {% if featured_img %}
+            <img
+              src="{{ featured_img | image_url: width: 500 }}"
+              alt="{{ product.title }}"
+              width="200"
+              height="{{ 200 | divided_by: featured_img.aspect_ratio | round }}"
+            >
+          {% endif %}
+
+          <p>{{ product.selected_or_first_available_variant.price | money }}</p>
+
+          <!-- Hidden input zaroori hai Add to Cart form submit karne ke liye -->
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+          <h2>Practice Variant picker43</h2>
+          {% comment %} <select name="id" id="{{ forloop.index }}"> {% endcomment %}
+          {% assign selectedVariant = product.selected_or_first_available_variant %}
+          {% comment %}
+            {% for variant in product.variants %}
+              {% comment %}
+                <option
+                  value="{{ variant.id }}"
+                  {% if variant.id == selectedVariant.id %}
+                    selected
+                  {% endif %}
+                >
+                  {{ variant.title }} - {{ variant.price | money }}
+                </option>
+              {% endcomment %}
+
+              <input
+                type="radio"
+                name="id"
+                id="{{ variant.id }}"
+                value="{{ variant.id }}"
+                {% unless variant.available %}
+                  disabled
+                {% endunless %}
+                {% if variant.id == selectedVariant.id %}
+                  checked
+                {% endif %}
+              >
+              <label for="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money }}</label>
+            {% endfor %}
+          {% endcomment %}
+          {% comment %} </select> {% endcomment %}
+
+          <style>
+            /* Custom styles to visually apply the user's logic perfectly */
+            .custom-swatches-container {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 10px;
+              margin-top: 5px;
+            }
+            .product-form__option {
+              border: none;
+              padding: 0;
+              margin-bottom: 20px;
+            }
+            .product-form__option-name {
+              font-weight: 600;
+              margin-bottom: 10px;
+              display: block;
+            }
+            .product-form__option-value {
+              position: relative;
+            }
+            .product-form__option-value input[type='radio'] {
+              position: absolute;
+              opacity: 0;
+              width: 100%;
+              height: 100%;
+              cursor: pointer;
+              margin: 0;
+              z-index: 2;
+            }
+
+            /* Text Label */
+            .product-form__option-value label {
+              display: inline-block;
+              padding: 8px 16px;
+              border: 1px solid #ddd;
+              border-radius: 4px;
+              cursor: pointer;
+              transition: all 0.2s ease-in-out;
+              background-color: #fff;
+              color: #333;
+              font-size: 14px;
+            }
+            .product-form__option-value input[type='radio']:checked + label {
+              border-color: #000;
+              background-color: #000;
+              color: #fff;
+            }
+
+            /* Color/Image Swatches */
+            .product-form__option-values--color .product-form__option-value label {
+              width: 40px;
+              height: 40px;
+              padding: 0;
+              border-radius: 50%;
+              border: 2px solid transparent;
+              box-shadow: 0 0 0 1px #ddd;
+              background-size: cover;
+              background-position: center;
+              display: block;
+            }
+            .product-form__option-values--color .product-form__option-value input[type='radio']:checked + label {
+              box-shadow: 0 0 0 2px #000;
+              border: 2px solid #fff; /* Inner white ring effect */
+              background-color: inherit;
+            }
+
+            /* Unavailable/Out of stock styling */
+            .product-form__option-value--unavailable label {
+              opacity: 0.4;
+              text-decoration: line-through;
+            }
+            .product-form__option-values--color .product-form__option-value--unavailable label::after {
+              content: '';
+              position: absolute;
+              top: 50%;
+              left: -10%;
+              width: 120%;
+              height: 2px;
+              background-color: #ff0000;
+              transform: rotate(-45deg);
+              pointer-events: none;
+            }
+          </style>
+
+          {% for option in product.options_with_values %}
+            <fieldset class="product-form__option">
+              <legend class="product-form__option-name">
+                {{ option.name }}
+              </legend>
+              <div class="custom-swatches-container {% if option.name == 'Color' or option.name == 'Colour' %}product-form__option-values--color{% endif %}">
+                {% for value in option.values %}
+                  {% assign input_id = option.name | append: '-' | append: value.name | handleize %}
+                  {% assign is_selected = value.selected %}
+                  {% assign is_available = value.available %}
+                  {% assign variant_id = value.variant.id %}
+
+                  <div class="product-form__option-value {% unless is_available %}product-form__option-value--unavailable{% endunless %}">
+                    <input
+                      id="{{ input_id }}"
+                      type="radio"
+                      name="{{ option.name }}"
+                      value="{{ variant_id }}"
+                      {% if is_selected %}
+                        checked
+                      {% endif %}
+                    >
+
+                    {% if option.name == 'Color' or option.name == 'Colour' %}
+                      {% if value.swatch.color %}
+                        <label
+                          for="{{ input_id }}"
+                          style="background-color: {{ value.swatch.color }};"
+                          title="{{ value.name }}"
+                        >
+                          <span class="visually-hidden" style="display: none;">{{ value.name }}</span>
+                        </label>
+                      {% elsif value.swatch.image %}
+                        <label
+                          for="{{ input_id }}"
+                          style="background-image: url('{{ value.swatch.image | image_url: width: 100 }}');"
+                          title="{{ value.name }}"
+                        >
+                          <span class="visually-hidden" style="display: none;">{{ value.name }}</span>
+                        </label>
+                      {% else %}
+                        <label for="{{ input_id }}">{{ value.name }}</label>
+                      {% endif %}
+                    {% else %}
+                      <label for="{{ input_id }}">{{ value.name }}</label>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            </fieldset>
+          {% endfor %}
+        </div>
+      </cart-variant-options>
+
+      <p>
+        Quantity:
+        <input
+          type="number"
+          name="quantity"
+          value="1"
+          min="1"
+        >
+      </p>
+
+      <button type="submit">Add to Cart</button>
+    </form>
+
+    <p>Product ID: {{ product.id }}</p>
+    <p>First Variant ID: {{ variant_id }}</p>
+
+    <button id="updateCartBtn-date-practice" type="button" class="button button--secondary" style="margin-top: 15px;">
+      Update All Cart Items (+3)
+    </button>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Cart API Practice",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Cart API Practice"
+    }
+  ]
+}
+{% endschema %}
+
+<script>
+  const form = document.getElementById('form-add-to-cart');
+  const updateCartBtn = document.getElementById('updateCartBtn-date-practice');
+
+  if (updateCartBtn) {
+    updateCartBtn.addEventListener('click', function () {
+      console.log('Update Cart Items with 3+ clicked');
+      updateCart();
+    });
+  }
+  function updateCart() {
+    // 1. Current cart data fetch karein
+    fetch(window.Shopify.routes.root + 'cart.js')
+      .then((response) => response.json())
+      .then((cart) => {
+        // 2. Har item ki quantity mein 3 add karein aur updates object banayen
+        let updates = {};
+        cart.items.forEach((item) => {
+          updates[item.key] = item.quantity + 3;
+        });
+
+        // 3. Shopify ki /cart/update.js API k liye data tayar karein (with sections)
+        let dataToUpdate = {
+          updates: updates,
+          sections: 'cart-drawer,cart-icon-bubble',
+          sections_url: window.location.pathname,
+        };
+
+        // 4. Update API call karein
+        return fetch(window.Shopify.routes.root + 'cart/update.js', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(dataToUpdate),
+        });
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Mass Update Response:', data);
+
+        const cartDrawerSectionId = 'cart-drawer';
+        const cartIconSectionId = 'cart-icon-bubble';
+
+        if (data.sections) {
+          // Cart Drawer Update
+          if (data.sections[cartDrawerSectionId]) {
+            const parsedHTML = new DOMParser().parseFromString(data.sections[cartDrawerSectionId], 'text/html');
+            let drawerElement = document.getElementById('cart-drawer') || document.querySelector('cart-drawer');
+            let newDrawerElement = parsedHTML.getElementById('cart-drawer') || parsedHTML.querySelector('cart-drawer');
+
+            if (drawerElement && newDrawerElement) {
+              drawerElement.innerHTML = newDrawerElement.innerHTML;
+              drawerElement.className = newDrawerElement.className;
+            }
+          }
+
+          // Cart Icon Update
+          if (data.sections[cartIconSectionId]) {
+            const parsedHTML = new DOMParser().parseFromString(data.sections[cartIconSectionId], 'text/html');
+            let iconElement =
+              document.getElementById(cartIconSectionId) ||
+              document.getElementById(`shopify-section-${cartIconSectionId}`);
+            let newIconElement =
+              parsedHTML.getElementById(cartIconSectionId) ||
+              parsedHTML.getElementById(`shopify-section-${cartIconSectionId}`);
+
+            if (iconElement && newIconElement) {
+              iconElement.innerHTML = newIconElement.innerHTML;
+            }
+          }
+        }
+
+        // Cart Drawer open karein
+        const drawer = document.querySelector('cart-drawer');
+        if (drawer) {
+          if (typeof drawer.show === 'function') drawer.show(true);
+          else if (typeof drawer.open === 'function') drawer.open();
+        }
+      })
+      .catch((error) => {
+        console.error('Error in mass update:', error);
+      });
+  }
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+    console.log('Prevented Form Submission');
+    add_to_cart();
+  });
+  // Event Delegation for Quantity Buttons
+  document.addEventListener('click', function (event) {
+    const plusButton = event.target.closest('button[name="plus"]');
+    const minusButton = event.target.closest('button[name="minus"]');
+    const deleteButton =
+      event.target.closest('cart-remove-button button') || event.target.closest('cart-remove-button');
+    if (deleteButton) {
+      event.preventDefault();
+      console.log('Delete clicked');
+
+      // Delete button aur input dono is wrapper k siblings hain
+      const wrapper = deleteButton.closest('.cart-item__quantity-wrapper');
+      if (wrapper) {
+        const inputField = wrapper.querySelector('input.quantity__input');
+        if (inputField) {
+          const variantId = inputField.dataset.quantityVariantId;
+          console.log('Variant ID:', variantId);
+          changeQuantity(variantId, 0);
+        }
+      }
+    }
+    if (plusButton) {
+      console.log('Plus clicked');
+      const quantityWrap = plusButton.closest('quantity-input');
+      if (quantityWrap) {
+        const inputField = quantityWrap.querySelector('input');
+        if (inputField) {
+          const currentQuantity = Number(inputField.value);
+          const newQuantity = currentQuantity + 1;
+
+          console.log('Current Quantity:', currentQuantity);
+          console.log('New Quantity:', newQuantity);
+          // inputField.value = newQuantity;
+          const variantId = inputField.dataset.quantityVariantId;
+
+          console.log('Variant ID:', variantId);
+          changeQuantity(variantId, newQuantity);
+        }
+      }
+    }
+
+    if (minusButton) {
+      console.log('Minus clicked');
+      const quantityWrap = minusButton.closest('quantity-input');
+      if (quantityWrap) {
+        const inputField = quantityWrap.querySelector('input');
+        if (inputField) {
+          const currentQuantity = Number(inputField.value);
+          const newQuantity = currentQuantity - 1;
+
+          console.log('Current Quantity:', currentQuantity);
+          console.log('New Quantity:', newQuantity);
+          // inputField.value = newQuantity;
+          const variantId = inputField.dataset.quantityVariantId;
+
+          console.log('Variant ID:', variantId);
+          changeQuantity(variantId, newQuantity);
+        }
+      }
+    }
+  });
+
+  function changeQuantity(variantId, quantity) {
+    let formData = new FormData();
+    formData.append('id', variantId);
+    formData.append('quantity', quantity);
+    console.log('formData', formData);
+    formData.append('sections', 'cart-drawer,cart-icon-bubble');
+    formData.append('sections_url', window.location.pathname);
+    const cartDrawerSectionId = 'cart-drawer';
+    const cartIconSectionId = 'cart-icon-bubble';
+
+    fetch(window.Shopify.routes.root + 'cart/change.js', {
+      method: 'POST',
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('data Change', data);
+        console.log('Cart Drawer:', data.sections['cart-drawer']);
+        console.log('Cart Icon:', data.sections['cart-icon-bubble']);
+        if (data.sections) {
+          if (data.sections[cartDrawerSectionId]) {
+            const parsedHTML = new DOMParser().parseFromString(data.sections[cartDrawerSectionId], 'text/html');
+
+            let drawerElement = document.getElementById('cart-drawer') || document.querySelector('cart-drawer');
+            let newDrawerElement = parsedHTML.getElementById('cart-drawer') || parsedHTML.querySelector('cart-drawer');
+
+            if (drawerElement && newDrawerElement) {
+              drawerElement.innerHTML = newDrawerElement.innerHTML;
+              drawerElement.className = newDrawerElement.className;
+            } else if (drawerElement) {
+              drawerElement.innerHTML = data.sections[cartDrawerSectionId];
+            }
+          }
+
+          // 3. Cart Icon Bubble Update
+          if (data.sections[cartIconSectionId]) {
+            const parsedHTML = new DOMParser().parseFromString(data.sections[cartIconSectionId], 'text/html');
+
+            let iconElement = document.getElementById(cartIconSectionId);
+            let newIconElement = parsedHTML.getElementById(cartIconSectionId);
+
+            if (!iconElement) iconElement = document.getElementById(`shopify-section-${cartIconSectionId}`);
+            if (!newIconElement) newIconElement = parsedHTML.getElementById(`shopify-section-${cartIconSectionId}`);
+
+            if (iconElement && newIconElement) {
+              // Sirf andar ka material (innerHTML) update karein
+              iconElement.innerHTML = newIconElement.innerHTML;
+            }
+          }
+        }
+
+        // Cart Drawer ko open karein (agar empty nahi hai to)
+        const drawer = document.querySelector('cart-drawer');
+        if (drawer) drawer.show(true);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }
+  function add_to_cart() {
+    let formData = new FormData(form);
+
+    // Shopify API section ID (without "shopify-section-")
+    const sectionId = 'sections--27768361419072__header';
+
+    const cartDrawerSectionId = 'cart-drawer';
+    const cartIconSectionId = 'cart-icon-bubble';
+
+    formData.append('sections', `${sectionId},${cartDrawerSectionId},${cartIconSectionId}`);
+
+    formData.append('sections_url', window.location.pathname);
+    console.log(' formData', formData);
+    console.log('selected Id Variant', formData.get('id'));
+    console.log('Quantity', formData.get('quantity'));
+
+    fetch(window.Shopify.routes.root + 'cart/add.js', {
+      method: 'POST',
+      body: formData,
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log('data', data);
+        console.log('sections:', data.sections);
+
+        console.log('Cart Drawer:', data.sections['cart-drawer']);
+
+        console.log('Cart Icon:', data.sections['cart-icon-bubble']);
+
+        if (data.sections) {
+          // 1. Header Update
+          if (data.sections[sectionId]) {
+            const headerElement = document.getElementById(`shopify-section-${sectionId}`);
+            if (headerElement) headerElement.innerHTML = data.sections[sectionId];
+          }
+
+          // 2. Cart Drawer Update (Using DOMParser to avoid nesting <cart-drawer> inside <cart-drawer>)
+          if (data.sections[cartDrawerSectionId]) {
+            const parsedHTML = new DOMParser().parseFromString(data.sections[cartDrawerSectionId], 'text/html');
+
+            let drawerElement = document.getElementById('cart-drawer') || document.querySelector('cart-drawer');
+            let newDrawerElement = parsedHTML.getElementById('cart-drawer') || parsedHTML.querySelector('cart-drawer');
+
+            if (drawerElement && newDrawerElement) {
+              // Sirf andar ka material (innerHTML) update karein aur classes update karein (is-empty remove karne ke liye)
+              drawerElement.innerHTML = newDrawerElement.innerHTML;
+              drawerElement.className = newDrawerElement.className;
+            } else if (drawerElement) {
+              // Fallback agar parser ko tag na mile
+              drawerElement.innerHTML = data.sections[cartDrawerSectionId];
+            }
+          }
+
+          // 3. Cart Icon Bubble Update
+          if (data.sections[cartIconSectionId]) {
+            const parsedHTML = new DOMParser().parseFromString(data.sections[cartIconSectionId], 'text/html');
+
+            let iconElement = document.getElementById(cartIconSectionId);
+            let newIconElement = parsedHTML.getElementById(cartIconSectionId);
+
+            if (!iconElement) iconElement = document.getElementById(`shopify-section-${cartIconSectionId}`);
+            if (!newIconElement) newIconElement = parsedHTML.getElementById(`shopify-section-${cartIconSectionId}`);
+
+            if (iconElement && newIconElement) {
+              iconElement.innerHTML = newIconElement.innerHTML;
+            } else if (iconElement) {
+              iconElement.innerHTML = data.sections[cartIconSectionId];
+            }
+          }
+
+          // 4. Drawer Open Karna (Optional, Dawn theme style)
+          const cartDrawer = document.querySelector('cart-drawer');
+          if (cartDrawer && typeof cartDrawer.open === 'function') {
+            cartDrawer.open();
+          }
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }
+  class CartVariantOptions extends HTMLElement {
+    constructor() {
+      super();
+      this.variantChangeFunc = this.handleVariantChange.bind(this);
+      this.onHistoryChange = this.onHistoryChange.bind(this); // Step 1: Bind history function
+      this.sectionId = this.getAttribute('section-id');
+    }
+
+    connectedCallback() {
+      console.log('connected element');
+      this.options = this.querySelectorAll('input[type="radio"]');
+      console.log('this.options', this.options);
+
+      console.log('this.sectionId', this.sectionId);
+      this.options.forEach((option) => {
+        option.addEventListener('change', this.variantChangeFunc);
+      });
+
+      let selectDropdown = this.querySelector('[name="id"]');
+      if (selectDropdown) {
+        selectDropdown.addEventListener('change', this.variantChangeFunc);
+      }
+
+      // Step 2: Popstate (back/forward) listener laga diya
+      window.addEventListener('popstate', this.onHistoryChange);
+    }
+
+    disconnectedCallback() {
+      console.log('disconnected element');
+      this.options.forEach((option) => {
+        option.removeEventListener('change', this.variantChangeFunc);
+      });
+      let selectDropdown = this.querySelector('[name="id"]');
+      if (selectDropdown) {
+        selectDropdown.removeEventListener('change', this.variantChangeFunc);
+      }
+
+      // Step 4: Cleanup (Listener remove karna)
+      window.removeEventListener('popstate', this.onHistoryChange);
+    }
+
+    // Step 3: Back/forward button click par ye function chalega
+    onHistoryChange(event) {
+      console.log('Popstate event (back/forward) triggered. URL:', window.location.href);
+      // Puraane URL ko utha kar directly section render kar denge
+      this.renderSectionFromUrl(window.location.href);
+    }
+
+    handleVariantChange(event) {
+      console.log('Variant changed');
+      console.log('event', event);
+      console.log('option Value', event.target.value);
+
+      // Naye variant ka URL tayar karein
+      const url = `${window.location.pathname}?variant=${event.target.value}`;
+
+      // Update hidden input immediately for Add To Cart
+      let hiddenInput = this.querySelector('input[name="id"]');
+      if (hiddenInput) {
+        hiddenInput.value = event.target.value;
+      }
+
+      // History mein URL ko update kar dein bina refresh ke
+      window.history.pushState({}, '', url);
+
+      // DRY: Ab yahan se naya API method call karein
+      this.renderSectionFromUrl(url);
+    }
+
+    // DRY: Common logic ko is function mein nikal liya
+    renderSectionFromUrl(url) {
+      // Check karenge ke URL me pehle se '?' hai ya nahi, aur us hisab se '&sections=' lagayenge
+      const fetchUrl = url + (url.includes('?') ? '&' : '?') + 'sections=' + this.sectionId;
+
+      fetch(fetchUrl)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log('data from section', data);
+
+          let newSectionHtml = data[this.sectionId];
+
+          if (newSectionHtml) {
+            // Upper code wali logic yahan apply kar di:
+            const parsedHTML = new DOMParser().parseFromString(newSectionHtml, 'text/html');
+
+            let sectionElement = document.getElementById(`shopify-section-${this.sectionId}`);
+            let newSectionElement = parsedHTML.getElementById(`shopify-section-${this.sectionId}`);
+
+            if (sectionElement && newSectionElement) {
+              sectionElement.innerHTML = newSectionElement.innerHTML;
+            } else if (sectionElement) {
+              sectionElement.innerHTML = newSectionHtml;
+            }
+          }
+        });
+    }
+  }
+
+  customElements.define('cart-variant-options', CartVariantOptions);
+</script>

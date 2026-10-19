@@ -242,9 +242,9 @@
         document.documentElement.classList.add('shopify-design-mode');
       }
     </script>
+    {{ 'quick-view.css' | asset_url | stylesheet_tag }}
   </head>
   {{ 'abdullah-global.css' | asset_url | stylesheet_tag }}
-
 
   <body class="gradient">
     <a class="skip-to-content-link button visually-hidden" href="#MainContent">
@@ -301,5 +301,33 @@
     {%- if settings.predictive_search_enabled -%}
       <script src="{{ 'predictive-search.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
+
+    <quick-view-modal
+      id="QuickViewModal"
+      class="quick-view-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      tabindex="-1"
+    >
+      <div class="quick-view-modal__overlay" data-quick-view-close></div>
+      <div class="quick-view-modal__content" role="document">
+        <button
+          type="button"
+          class="quick-view-modal__close-btn"
+          data-quick-view-close
+          aria-label="{{ 'accessibility.close' | t }}"
+        >
+          {% render 'icon-close' %}
+        </button>
+        <div id="QuickViewModalContent" class="quick-view-modal__body">
+          <div class="quick-view-modal__loading-state hidden" data-quick-view-loader>
+            <div class="quick-view-modal__spinner"></div>
+          </div>
+        </div>
+      </div>
+    </quick-view-modal>
+
+    <script src="{{ 'quick-view.js' | asset_url }}" defer="defer"></script>
   </body>
 </html>

@@ -1,0 +1,194 @@
+@import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+
+.container-featured-products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 2rem 6rem;
+  align-items: stretch;
+}
+
+@media screen and (max-width: 749px) {
+  .container-featured-products {
+    padding: 1.5rem 1rem;
+    gap: 15px;
+  }
+}
+
+.custom-product {
+  display: grid;
+  /* Pehli row text/title ke liye, doosri product main content, teesri wrapper ke liye fixed */
+  grid-template-rows: auto 1fr auto; 
+  row-gap: 6px;
+  padding: 15px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background: #fff; /* Agar background chahiye */
+  overflow: hidden;  /* Yeh zaroori hai taake button pehle neechay chhupa rahe */
+  
+  /* Agar poore product card par transition chahiye */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; 
+}
+
+
+
+.custom-product .img-button-wrapper {
+  /* Padding pehle se hi set rakhein taake layout hile nahi */
+  padding: 0 15px; 
+  opacity: 0;
+  
+  /* Visibility ki jagah pointer-events use karein, transition smooth hogi */
+  pointer-events: none; 
+  
+  /* Button ko thoda neechay push karein */
+  transform: translateY(20px); 
+  
+  /* Transition timing 0.3s ya 0.4s perfect hoti hai */
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Hover State */
+.custom-product:hover .img-button-wrapper {
+  opacity: 1;
+  pointer-events: auto; /* Hover par click ho sake */
+  transform: translateY(0); /* Apni asli jagah par wapas aa jaye */
+}
+
+.img-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 4px;
+align-self: start;
+}
+
+.img-wrapper img,
+.img-wrapper svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.img-button-wrapper {
+    position: relative;
+    bottom: 6px;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 0 15px;
+    box-sizing: border-box;
+    /* z-index: 5; */
+}
+
+.img-button-wrapper .add-to-cart-btn,
+.img-button-wrapper .quick-view-btn {
+  background-color: #DDB7AA;
+  color: #fff;
+  padding: 16px 10px;
+  cursor: pointer;
+  /* z-index: 2; */
+  width: 100%;
+  border: none;
+  border-radius: 0.5rem;
+  font-family: "Varela Round", sans-serif;
+  font-weight: 500;
+  font-size: 1.4rem;
+  box-sizing: border-box;
+  transition: background-color 0.2s ease;
+}
+
+.img-button-wrapper .add-to-cart-btn:hover,
+.img-button-wrapper .quick-view-btn:hover {
+  background-color: #D0A395;
+  color: #fff;
+}
+
+
+.img-wrapper .secondary-img {
+  opacity: 0;
+}
+
+/* Hover state logic jab poore card (.custom-product) par hover ho */
+.custom-product:hover .primary-img {
+  /* Optional slight zoom effect on hover */
+  transform: scale(1.03);
+  /* z-index: 2;  */
+}
+
+.custom-product:hover .secondary-img {
+  opacity: 1;
+  transform: scale(1.03);
+  /* z-index: 3; */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+}
+.product-info {
+  display: grid;
+  grid-template-rows: auto auto auto 1fr;
+  row-gap: 6px;
+  text-align: center;
+  line-height: 1.5em;
+  width: 100%;
+}
+
+.product-info p {
+  margin: 0;
+}
+
+.product-info .product-vendor {
+  font-family: "Varela Round", sans-serif;
+  font-weight: 900;
+  font-style: bold;
+  color: #e6c6b3;
+}
+
+.product-info .product-title {
+  font-family: "Varela Round", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  color: #545353;
+  font-size: 1.6rem;
+}
+
+.product-reviews {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.product-reviews span {
+  font-family: "Varela Round", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  color: #736f6f;
+  font-size: 1.2rem;
+}
+
+.product-info .product-price {
+  align-self: end;
+}
+
+.custom-star-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.custom-star-icon path {
+  fill: #eacf6ede;
+  transition: fill 0.3s ease;
+}
+

@@ -1,0 +1,79 @@
+<div class="quick-view-custom" id="QuickView-{{ product.id }}">
+  <div class="quick-view-custom__overlay" data-quick-view-close></div>
+
+  <div class="quick-view-custom__box" role="dialog" aria-modal="true" aria-label="Quick View">
+    <button type="button" class="quick-view-custom__close" data-quick-view-close aria-label="Close Quick View">
+      &times;
+    </button>
+
+    <div class="quick-view-custom__content">
+      <!-- Media Column -->
+      <div class="quick-view-custom__media">
+        {% if product.featured_image != blank %}
+          {{
+            product.featured_image
+            | image_url: width: 600
+            | image_tag: loading: 'lazy', width: 600, height: 600, alt: product.title, class: 'quick-view-custom__image'
+          }}
+        {% else %}
+          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        {% endif %}
+      </div>
+
+      <!-- Info Column -->
+      <div class="quick-view-custom__info">
+        {% if product.vendor != blank %}
+          <p class="quick-view-custom__vendor">{{ product.vendor | escape }}</p>
+        {% endif %}
+
+        <h2 class="quick-view-custom__title">{{ product.title | escape }}</h2>
+
+        <div class="quick-view-custom__price">
+          {{ product.price | money }}
+        </div>
+
+        {% if product.description != blank %}
+          <div class="quick-view-custom__description">
+            {{ product.description | strip_html | truncatewords: 30 }}
+          </div>
+        {% endif %}
+
+        <form method="post" action="{{ routes.cart_add_url }}" class="quick-view-custom__form">
+          {%- assign current_variant = product.selected_or_first_available_variant -%}
+
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
+          <p>Quantity:</p>
+          <div class="quick-view-custom__form-actions">
+            <div class="quantity_wrapper">
+              <button type="button" name="minus" class="quantity_btn">-</button>
+              <input
+                type="number"
+                name="quantity"
+                value="1"
+                min="1"
+                class="quantity_input"
+              >
+              <button type="button" name="plus" class="quantity_btn">+</button>
+            </div>
+            <button
+              type="submit"
+              name="add"
+              class="quick-view-custom__submit-btn"
+              {% unless product.available %}
+                disabled
+              {% endunless %}
+            >
+              {% if product.available %}
+                Add to Cart
+              {% else %}
+                Sold Out
+              {% endif %}
+            </button>
+          </div>
+        </form>
+
+        <a href="{{ product.url }}" class="quick-view-custom__full-details"> View full details &rarr; </a>
+      </div>
+    </div>
+  </div>
+</div>

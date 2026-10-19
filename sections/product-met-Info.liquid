@@ -1,0 +1,39 @@
+{% if product.metafields.custom.care_instruction != blank
+  or product.metafields.custom.material != blank
+  or product.metafields.custom.warranty != blank
+%}
+  <product-meta-information>
+    <div class="" style="padding: 30px;">
+      {% if product.metafields.custom.care_instruction != blank %}
+        <div class="" style="">
+          <p>Care Instruction : {{ product.metafields.custom.care_instruction | metafield_tag }}</p>
+        </div>
+      {% endif %}
+      {% if product.metafields.custom.material != blank %}
+        <div class="" style="">
+          <p>Material : {{ product.metafields.custom.material.value }}</p>
+        </div>
+      {% endif %}
+      {% if product.metafields.custom.warranty != blank %}
+        <div class="" style="">
+          <p>Warranty : {{ product.metafields.custom.warranty.value }}</p>
+        </div>
+      {% endif %}
+    </div>
+  </product-meta-information>
+{% endif %}
+
+
+
+{% schema %}
+{
+  "name": "Product Meta Information",
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "Product Meta Information"
+    }
+  ]
+}
+{% endschema %}

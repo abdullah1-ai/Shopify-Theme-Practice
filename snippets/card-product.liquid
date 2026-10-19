@@ -197,6 +197,21 @@
             {%- endif -%}
 
             {% render 'price', product: card_product, price_class: '' %}
+            {%- assign quick_view_product = card_product | default: product -%}
+            {%- if quick_view_product != blank -%}
+              <div class="card__quick-view-wrapper" style="margin-top: 0.8rem;">
+                <button
+                  type="button"
+                  class="button button--secondary button--full-width card__quick-view-btn"
+                  data-quick-view-trigger
+                  data-product-handle="{{ quick_view_product.handle }}"
+                  aria-haspopup="dialog"
+                  aria-label="Quick View {{ quick_view_product.title | escape }}"
+                >
+                  Quick View
+                </button>
+              </div>
+            {%- endif -%}
           </div>
         </div>
         {%- if show_quick_add -%}

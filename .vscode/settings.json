@@ -48,10 +48,7 @@
         }
       },
       {
-        "scope": [
-          "string.quoted.double.liquid",
-          "string.quoted.single.liquid"
-        ],
+        "scope": ["string.quoted.double.liquid", "string.quoted.single.liquid"],
         "settings": {
           "foreground": "#CE9178"
         }
@@ -74,10 +71,7 @@
         }
       },
       {
-        "scope": [
-          "constant.language.liquid",
-          "constant.numeric.liquid"
-        ],
+        "scope": ["constant.language.liquid", "constant.numeric.liquid"],
         "settings": {
           "foreground": "#B5CEA8"
         }

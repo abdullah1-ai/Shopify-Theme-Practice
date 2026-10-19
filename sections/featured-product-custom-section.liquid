@@ -1,0 +1,370 @@
+<style>
+  #{{ section.id }} .container {
+    max-width: 1200px;
+    padding: 20px;
+    margin: 0 auto;
+  }
+
+  #{{ section.id }} .heading {
+    text-align: {{ section.settings.text_alignment | default: 'center' }};
+    margin-bottom: 25px;
+  }
+  #{{ section.id }} .heading h2 {
+    font-size: 2em;
+    font-weight: bold;
+    margin: 0 0 8px;
+  }
+  #{{ section.id }} .heading p {
+    font-size: 1.1em;
+    margin: 0;
+  }
+  #{{ section.id }} .place-holder {
+    width: 180px;
+    height: 180px;
+  }
+  #{{ section.id }} .place-holder svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  {%- assign alignment = section.settings.product_alignment | default: 'center' -%}
+  {%- if alignment == 'left' -%}
+    {%- assign alignment = 'flex-start' -%}
+  {%- elsif alignment == 'right' -%}
+    {%- assign alignment = 'flex-end' -%}
+  {%- endif -%}
+
+  #{{ section.id }} .product-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: {{ alignment }};
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    margin-bottom: 35px;
+  }
+
+  #{{ section.id }} .product-wrapper .image {
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #c9c9c9;
+    aspect-ratio: 1;
+    width: 100%;
+    max-width: 400px;
+    max-height: 400px;
+  }
+
+  #{{ section.id }} .product-wrapper .image img,
+  #{{ section.id }} .product-wrapper .image svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #{{ section.id }} .product-wrapper .info {
+    display: flex;
+    flex-direction: column;
+    align-items: {{ alignment }};
+    text-align: {% if alignment == 'flex-end' %}right{% elsif alignment == 'flex-start' %}left{% else %}center{% endif %};
+    gap: 6px;
+  }
+
+  #{{ section.id }} .product-wrapper .info h4 {
+    margin: 0;
+    font-size: 1.3em;
+  }
+
+  #{{ section.id }} .product-wrapper .info p {
+    margin: 0;
+    font-size: 1.1em;
+  }
+
+  #{{ section.id }} .product-wrapper .info a {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 8px 18px;
+    background-color: #121212;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.95em;
+  }
+
+  #{{ section.id }} .feature-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    place-items: center;
+    place-content: center;
+    width: 100%;
+  }
+
+  #{{ section.id }} .feature-item {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  #{{ section.id }} .feature-image {
+    width: 100%;
+    max-width: 200px;
+  }
+  #{{ section.id }} .feature-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+  #{{ section.id }} .feature-info h4 {
+    margin: 8px 0 0;
+    font-size: 1.1em;
+  }
+  #{{ section.id }} .feature-description p {
+    margin: 6px 0 0;
+    font-size: 0.95em;
+    color: #555;
+  }
+
+  /* ========================================================
+     Desktop Devices (min-width: 750px)
+     ======================================================== */
+  @media screen and (min-width: 750px) {
+    #{{ section.id }} .container {
+      padding: 40px 20px;
+    }
+
+    #{{ section.id }} .heading h2 {
+      font-size: 2.2em;
+    }
+
+    #{{ section.id }} .heading p {
+      font-size: 1.2em;
+    }
+
+    #{{ section.id }} .product-wrapper .image {
+      max-width: 400px;
+      max-height: 400px;
+    }
+
+    #{{ section.id }} .feature-list {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+  }
+
+  /* ========================================================
+     Mobile Devices (max-width: 749px)
+     ======================================================== */
+  @media screen and (max-width: 749px) {
+    #{{ section.id }} .container {
+      padding: 20px 12px;
+    }
+
+    #{{ section.id }} .heading h2 {
+      font-size: 1.5em;
+    }
+
+    #{{ section.id }} .heading p {
+      font-size: 0.95em;
+    }
+
+    #{{ section.id }} .product-wrapper {
+      margin-bottom: 25px;
+      gap: 12px;
+    }
+
+    #{{ section.id }} .product-wrapper .image {
+      max-width: 240px;
+      max-height: 240px;
+    }
+
+    #{{ section.id }} .feature-list {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    #{{ section.id }} .feature-item {
+      padding: 12px;
+    }
+  }
+</style>
+<custom-featured-product-section id="{{ section.id }}">
+  <div class="container">
+    <div class="heading">
+      <h2>{{ section.settings.heading }}</h2>
+      <p>{{ section.settings.description }}</p>
+    </div>
+
+    {% assign selected_product = section.settings.user_selected_product %}
+
+    {% if selected_product != blank %}
+      <div class="product-wrapper">
+        <div class="image">
+          {% if selected_product.featured_image != blank %}
+            <img
+              src="{{ selected_product.featured_image | image_url }}"
+              alt="{{ selected_product.featured_image.alt | escape }}"
+              width="400"
+              height="400"
+            >
+          {% else %}
+            {{ 'product-1' | placeholder_svg_tag }}
+          {% endif %}
+        </div>
+        <div class="info">
+          <h4>{{ selected_product.title }}</h4>
+          <p>{{ selected_product.price | money }}</p>
+          <a href="{{ selected_product.url }}">View Product</a>
+        </div>
+      </div>
+    {% elsif selected_product == blank %}
+      <div class="not-available">
+        <h4>Product Not Selected</h4>
+      </div>
+
+    {% elsif selected_product.available == false %}
+      <div class="not-available">
+        <h4>Product Not Available</h4>
+      </div>
+    {% endif %}
+
+    <div class="feature-list">
+      {% for block in section.blocks %}
+        <div class="feature-item" {{ block.shopify_attributes }}>
+          <div class="feature-image">
+            {% if block.settings.feature_image != blank %}
+              <img
+                src="{{ block.settings.feature_image | image_url }}"
+                alt="{{ block.settings.feature_image.alt | escape }}"
+                width="200"
+                height="200"
+              >
+            {% else %}
+              <div class="place-holder">
+                {{ 'product-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+          <div class="feature-info">
+            <h4>{{ block.settings.title }}</h4>
+            <div class="feature-description">{{ block.settings.description }}</div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</custom-featured-product-section>
+
+{% schema %}
+{
+  "name": "Custom Featured Product",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Featured Product"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Featured Product Description<p>"
+    },
+    {
+      "type": "product",
+      "id": "user_selected_product",
+      "label": "Select a Product"
+    },
+    {
+      "type": "select",
+      "id": "product_alignment",
+      "label": "Product Alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Feature"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "default": "<p>Feature Description</p>"
+        },
+        {
+          "type": "image_picker",
+          "id": "feature_image",
+          "label": "Feature Image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Featured Product",
+      "blocks": [
+        {
+          "type": "feature"
+        },
+        {
+          "type": "feature"
+        },
+        {
+          "type": "feature"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,133 @@
+<style>
+  /* Drawer hide karne ki class */
+  .drawer-hidden {
+    transform: translateX(100%);
+    display: none;
+  }
+
+  /* Drawer show karne ki class */
+  .drawer-open {
+    display: block;
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 350px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    padding: 20px;
+    transform: translateX(0);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .drawer-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+  }
+</style>
+{% comment %} 1. Product Form {% endcomment %}
+{% assign test_product = product.selected_or_first_available_variant %}
+<!-- Yahan kisi bhi product ka handle likhen -->
+
+<div class="custom-practice-container">
+  <form id="custom-atc-form" action="{{ routes.cart_add_url }}" method="post">
+    <!-- Variant ID -->
+    <input type="hidden" name="id" value="{{ test_product.id }}">
+    <!-- Quantity -->
+    <input type="hidden" name="quantity" value="1">
+
+    <button type="submit" id="add-to-cart-btn" class="btn">Add to Cart with Ajax</button>
+  </form>
+</div>
+
+{% comment %} 2. Cart Drawer HTML {% endcomment %}
+<!-- Initially hum isko 'drawer-hidden' class denge -->
+<div id="my-cart-drawer" class="drawer-hidden">
+  <div class="drawer-header">
+    <h2>My Custom Cart</h2>
+    <button id="close-drawer-btn">X Close</button>
+  </div>
+
+  <div id="cart-drawer-content">
+    {% if cart.item_count > 0 %}
+      {% for item in cart.items %}
+        <div class="cart-item">
+         <img src={{ item.image }} alt={{ item.title }} srcset={{ item.image.src }} width="200" height={{ 200 | divided_by: item.featured_image.aspect_ratio | round }}>
+          <p>{{ item.title }} - Qty: {{ item.quantity }}</p>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p>Your cart is empty.</p>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Custom Cart Practice",
+  "presets": [
+    {
+      "name": "Custom Cart Practice"
+    }
+  ]
+}
+{% endschema %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // 1. Elements ko select karna
+    const form = document.getElementById('custom-atc-form');
+    const drawer = document.getElementById('my-cart-drawer');
+    const closeBtn = document.getElementById('close-drawer-btn');
+    const drawerContent = document.getElementById('cart-drawer-content');
+
+    // 2. Drawer Close karne ki logic (Remove/Add class)
+    closeBtn.addEventListener('click', function () {
+      drawer.classList.remove('drawer-open');
+      drawer.classList.add('drawer-hidden');
+    });
+
+    // 3. Form Submit (Add to Cart) ki logic
+    form.addEventListener('submit', function (event) {
+      // Default page reload ko rokna
+      event.preventDefault();
+
+      // Form ka data collect karna
+      let formData = new FormData(form);
+
+      // Shopify Section Rendering API ka use: Hum Shopify ko batayenge ke
+      // add to cart ke baad hmein 'custom-cart-practice' section ka naya HTML bhi wapis do
+      formData.append('sections', 'custom-cart-practice');
+
+      // Fetch request bhajna /cart/add.js par
+      fetch(window.Shopify.routes.root + 'cart/add.js', {
+        method: 'POST',
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // Data aagaya, ab drawer open karo
+          drawer.classList.remove('drawer-hidden');
+          drawer.classList.add('drawer-open');
+
+          // Naye section ka HTML nikal kar purane HTML se replace karna
+          // data.sections['custom-cart-practice'] mein hamara naya rendered HTML hoga
+          if (data.sections) {
+            // Ek temporary div bana kar usme naya HTML dalenge taake specific part nikal saken
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = data.sections['custom-cart-practice'];
+
+            // Naye HTML me se '#cart-drawer-content' nikal kar purane wale se replace kar den
+            const newCartContent = tempDiv.querySelector('#cart-drawer-content').innerHTML;
+            drawerContent.innerHTML = newCartContent;
+          }
+        })
+        .catch((error) => {
+          console.error('Error adding to cart:', error);
+        });
+    });
+  });
+</script>

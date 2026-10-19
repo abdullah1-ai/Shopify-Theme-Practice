@@ -1,0 +1,43 @@
+<quick-view-section class="quick-view-section" id="secton-id-{{ section.id }}">
+  <div class="quick-view-wrapper">
+    <div class="Img-wrapper">
+      {% if product.featured_image != blank %}
+        <img
+          src="{{ product.featured_image | image_url: width: 400, height: 400 }}"
+          alt="{{ product.featured_image.alt | default: product.title | escape }}"
+          width="400"
+          height="400"
+          loading="lazy"
+        >
+      {% else %}
+        {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      {% endif %}
+    </div>
+    <div class="info-wrapper">
+      <p class="vendor">{{ product.vendor }}</p>
+      <h2 class="title">{{ product.title }}</h2>
+      <p class="description">{{ product.description }}</p>
+      <p class="price">{{ product.price | money }}</p>
+      <form>
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit">Add to Cart</button>
+      </form>
+      <hr>
+      <button class="view-full-details">View full details ---></button>
+    </div>
+  </div>
+</quick-view-section>
+
+{% schema %}
+{
+  "name": "Quick View",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Quick View",
+      "category": "Content"
+    }
+  ]
+}
+{% endschema %}

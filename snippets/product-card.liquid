@@ -1,0 +1,148 @@
+{%- liquid
+  assign product_url = product.url
+  assign first_variant = product.first_available_variant
+  assign is_single_variant = false
+  if product.variants.size == 1
+    assign is_single_variant = true
+  endif
+  assign has_secondary_image = false
+  if product.images.size > 1
+    assign has_secondary_image = true
+  endif
+  assign first_tag = product.tags.first
+  assign save_badge = product.metafields.custom.save_badge.value
+  assign has_save_badge = false
+  if product.compare_at_price_max > product.price and save_badge != blank
+    assign has_save_badge = true
+  endif
+-%}
+
+<product-item class="product-item">
+
+  <div class="product-item__image-wrapper{% if has_secondary_image %} product-item__image-wrapper--multiple{% endif %}">
+    {%- comment -%} Labels: first tag + save badge — single label-list, top-left {%- endcomment -%}
+    {%- if first_tag != blank or has_save_badge -%}
+      <div class="product-item__label-list label-list">
+        {%- if first_tag != blank -%}
+          <span class="label label--custom">{{ first_tag }}</span>
+        {%- endif -%}
+        {%- if has_save_badge -%}
+          <span class="label label--sale">Save {{ save_badge }}%</span>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} Aspect ratio container + images {%- endcomment -%}
+    <a
+      href="{{ product_url }}"
+      class="product-item__aspect-ratio"
+      aria-label="{{ product.title | escape }}"
+    >
+      {%- if product.featured_image != blank -%}
+        {{
+          product.featured_image
+          | image_url: width: 800
+          | image_tag:
+            class: 'product-item__primary-image',
+            loading: 'lazy',
+            width: product.featured_image.width,
+            height: product.featured_image.height,
+            widths: '300, 400, 500, 600, 800',
+            sizes: '(max-width: 549px) 50vw, (max-width: 989px) 33vw, 25vw',
+            alt: product.featured_image.alt
+          | default: product.title
+          | escape
+        }}
+      {%- endif -%}
+
+      {%- if has_secondary_image -%}
+        {{
+          product.images[1]
+          | image_url: width: 800
+          | image_tag:
+            class: 'product-item__secondary-image',
+            loading: 'lazy',
+            width: product.images[1].width,
+            height: product.images[1].height,
+            widths: '300, 400, 500, 600, 800',
+            sizes: '(max-width: 549px) 50vw, (max-width: 989px) 33vw, 25vw',
+            alt: product.images[1].alt
+          | default: product.title
+          | escape
+        }}
+      {%- endif -%}
+    </a>
+
+    {%- comment -%} Quick Add / Choose Options {%- endcomment -%}
+    {%- if is_single_variant and first_variant != blank -%}
+      <form
+        method="post"
+        action="{{ routes.cart_add_url }}"
+        class="product-item__quick-form"
+        enctype="multipart/form-data"
+        accept-charset="UTF-8"
+      >
+        <input type="hidden" name="form_type" value="product">
+        <input type="hidden" name="utf8" value="✓">
+        <input type="hidden" name="quantity" value="1">
+        <input type="hidden" name="id" value="{{ first_variant.id }}">
+        <button type="submit" class="button button--outline button--full">
+          + {{ 'products.product.add_to_cart' | t }}
+        </button>
+      </form>
+    {%- elsif product.available -%}
+      <div class="product-item__quick-form">
+        <a href="{{ product_url }}" class="button button--outline button--full">
+          {{ 'products.product.choose_options' | t }}
+        </a>
+      </div>
+    {%- else -%}
+      <div class="product-item__quick-form">
+        <button type="button" class="button button--outline button--full" disabled>
+          {{ 'products.product.sold_out' | t }}
+        </button>
+      </div>
+    {%- endif -%}
+
+    {%- if product != blank -%}
+      <div class="product-item__quick-view-wrapper" style="margin-top: 0.5rem;">
+        <button
+          type="button"
+          class="button button--secondary button--full quick-view-btn"
+          data-quick-view-trigger
+          data-product-handle="{{ product.handle }}"
+          aria-haspopup="dialog"
+          aria-label="Quick View {{ product.title | escape }}"
+        >
+          Quick View
+        </button>
+      </div>
+    {%- endif -%}
+  </div>
+  {%- comment -%} ── END IMAGE WRAPPER ─────────────────────────────────────── {%- endcomment -%}
+
+  {%- comment -%} ── INFO ─────────────────────────────────────────────────── {%- endcomment -%}
+  <div class="product-item__info">
+    <div class="product-item-meta">
+      {%- if product.vendor != blank -%}
+        <span class="product-item-meta__vendor">{{ product.vendor }}</span>
+      {%- endif -%}
+
+      <a href="{{ product_url }}" class="product-item-meta__title">
+        {{ product.title }}
+      </a>
+
+      <div class="product-item-meta__price-list-container">
+        <div class="price-list">
+          {%- if product.compare_at_price > product.price -%}
+            <span class="price price--on-sale">{{ product.price | money }}</span>
+            <span class="price price--compare">{{ product.compare_at_price | money }}</span>
+          {%- else -%}
+            <span class="price">{{ product.price | money }}</span>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+  {%- comment -%} ── END INFO ─────────────────────────────────────────────── {%- endcomment -%}
+</product-item>

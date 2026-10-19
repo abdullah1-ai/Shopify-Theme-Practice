@@ -28,17 +28,25 @@
     </p>
   </div>
   <div class="product">
-    <h2 class="">Selected Product</h2>
-    <p class="">{{ section.settings.dynamic_Product.title | default: 'No product Selected' }}</p>
-    <p>{{ section.settings.dynamic_Product.price | money | default: 'No price Available' }}</p>
-    <p>
-      <strong>Availability:</strong>
+    <h2>{{ section.settings.section_heading | default: 'Section Heading Practice' }}</h2>
+    {% if section.settings.dynamic_Product != blank %}
+      <h2>Selected Product</h2>
+
+      <p>{{ section.settings.dynamic_Product.title }}</p>
+
+      <p>
+        {{ section.settings.dynamic_Product.price | money }}
+      </p>
+
       {% if section.settings.dynamic_Product.available %}
-        <span style="color: green; font-weight: bold;">In Stock</span>
+        <span>In Stock</span>
       {% else %}
-        <span style="color: red; font-weight: bold;">Sold Out</span>
+        <span>Sold Out</span>
       {% endif %}
-    </p>
+
+    {% else %}
+      <p>No product selected.</p>
+    {% endif %}
   </div>
   {% if product.metafields.custom.material != blank %}
     <p><strong>Material:</strong> {{ product.metafields.custom.material }}</p>

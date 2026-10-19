@@ -1,0 +1,32 @@
+.quick-view-wrapper{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 20px;
+}
+.quick-view-section{
+    padding: 4% 12%;
+    margin:0 auto
+}
+.Img-wrapper img{
+    width: 100%;
+    height: auto;
+}
+.info-wrapper h2{
+    margin: 0;
+}
+.view-full-details{
+    color: black;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+}
+.view-full-details:hover{
+    color: gray;
+}
+@media (max-width: 768px) {
+    .quick-view-wrapper{
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,263 @@
+/* Quick View Modal Styles */
+.quick-view-custom {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.quick-view-custom.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Background Backdrop Overlay */
+.quick-view-custom__overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 1;
+}
+
+/* Modal Dialog Box */
+.quick-view-custom__box {
+  position: relative;
+  z-index: 2;
+  background: #ffffff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.quick-view-custom.is-active .quick-view-custom__box {
+  transform: scale(1);
+}
+
+/* Close Button */
+.quick-view-custom__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #f4f4f4;
+  color: #333333;
+  font-size: 24px;
+  line-height: 1;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+  z-index: 10;
+}
+
+.quick-view-custom__close:hover {
+  background: #e0e0e0;
+  transform: rotate(90deg);
+}
+
+/* Grid Layout */
+.quick-view-custom__content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .quick-view-custom__content {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
+
+/* Product Media */
+.quick-view-custom__media {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.quick-view-custom__image {
+  width: 100%;
+  height: auto;
+  max-height: 380px;
+  object-fit: contain;
+  display: block;
+}
+
+/* Product Info */
+.quick-view-custom__info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quick-view-custom__vendor {
+  font-size: 13px;
+  color: #777777;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.quick-view-custom__title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #222222;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.quick-view-custom__price {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111111;
+}
+
+.quick-view-custom__description {
+  font-size: 14px;
+  color: #555555;
+  line-height: 1.5;
+}
+
+/* Quantity Label */
+.quick-view-custom__form > p {
+  font-size: 15px;
+  color: #222222;
+  margin: 0 0 10px 0;
+  font-weight: 500;
+}
+
+/* Actions Row Container */
+.quick-view-custom__form-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+/* Quantity Box Wrapper */
+.quick-view-custom .quantity_wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 110px;
+  height: 46px;
+  border: 1px solid #e2e2e2;
+  background-color: #ffffff;
+  box-sizing: border-box;
+}
+
+/* Plus/Minus Buttons */
+.quick-view-custom .quantity_btn {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  font-weight: 500;
+  color: #222222;
+  width: 34px;
+  height: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  user-select: none;
+  transition: opacity 0.2s ease;
+}
+
+.quick-view-custom .quantity_btn:hover {
+  opacity: 0.7;
+}
+
+/* Quantity Input Number */
+.quick-view-custom .quantity_input {
+  width: 42px;
+  height: 100%;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #222222;
+  padding: 0;
+  -moz-appearance: textfield;
+}
+
+.quick-view-custom .quantity_input::-webkit-outer-spin-button,
+.quick-view-custom .quantity_input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.quick-view-custom .quantity_input:focus {
+  outline: none;
+}
+
+/* Add to Cart Submit Button */
+.quick-view-custom__submit-btn {
+  flex: 1;
+  height: 46px;
+  padding: 0 20px;
+  background-color: #d7a59a;
+  color: #ffffff;
+  border: none;
+  border-radius: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+  box-sizing: border-box;
+}
+
+.quick-view-custom__submit-btn:hover:not(:disabled) {
+  opacity: 0.92;
+  filter: brightness(0.97);
+}
+
+.quick-view-custom__submit-btn:disabled {
+  background-color: #e5c3bc;
+  cursor: not-allowed;
+}
+
+/* View Full Details Link */
+.quick-view-custom__full-details {
+  display: inline-block;
+  font-size: 14px;
+  color: #333333;
+  text-decoration: underline;
+  margin-top: 4px;
+}
+
+.quick-view-custom__full-details:hover {
+  color: #000000;
+}

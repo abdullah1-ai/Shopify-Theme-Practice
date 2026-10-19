@@ -1,0 +1,51 @@
+{{ 'custom-featured-items-practice.css' | asset_url | stylesheet_tag }}
+{{ 'quick-view-custom.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'custom-featured-items-practice.js' | asset_url }}" defer></script>
+
+<featured-custom-products>
+  <div class="container-featured-products">
+    {% if request.page_type == 'index' %}
+      {% for product in collections.all.products %}
+        {% render 'custom-card-items-practice', product: product %}
+      {% endfor %}
+    {% endif %}
+  </div>
+  <div id="quick-view-container"></div>
+</featured-custom-products>
+
+{% schema %}
+{
+  "name": "Custom Featured Products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section heading",
+      "default": "Our Products"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Products per row (desktop)",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "product_limit",
+      "label": "Max products to show",
+      "min": 4,
+      "max": 20,
+      "step": 4,
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Featured Products"
+    }
+  ]
+}
+{% endschema %}
